@@ -42,9 +42,6 @@ export default function Login({ onAuthSuccess }) {
     <div className="auth-split-layout">
       {/* Left side (Visuals + Branding) */}
       <div className="auth-left animate-fade-in">
-        <svg className="bg-curve" viewBox="0 0 100 100" preserveAspectRatio="none">
-          <path d="M100 0 C30 30 30 70 100 100 Z" />
-        </svg>
 
         <h1 className="hero-text">
           Drive.<br/>Earn.<br/>

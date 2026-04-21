@@ -54,57 +54,53 @@ h1, h2, h3, h4, h5, h6 {
   border-color: rgba(255,255,255,0.15);
 }
 
-.auth-container {
+.auth-split-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   height: 100vh;
   width: 100vw;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  position: relative;
-  padding-right: 10%;
-}
-
-@media (max-width: 768px) {
-  .auth-container {
-    justify-content: center;
-    padding-right: 0;
-  }
-}
-
-.login-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, rgba(13,17,23,0.95) 0%, rgba(22,46,92,0.85) 50%, #0d1117 100%), url('/driver-bg.jpg') center/cover no-repeat;
-  z-index: -1;
+  background-color: #0d1117;
   overflow: hidden;
 }
 
-.login-side-content {
-  position: absolute;
-  left: 8%;
-  top: 50%;
-  transform: translateY(-50%);
+.auth-left {
+  position: relative;
   display: flex;
   flex-direction: column;
-  color: #fff;
-  z-index: 5;
-  width: 40%;
+  justify-content: center;
+  padding-left: 14%;
+  background: linear-gradient(90deg, rgba(8,11,18,0.95) 0%, rgba(22,46,92,0.85) 50%, rgba(13,17,23,0.1) 100%), url('/driver-bg.jpg') center/cover no-repeat;
+  z-index: 1;
+}
+
+.bg-curve {
+  position: absolute;
+  right: -1px;
+  top: 0;
+  height: 100%;
+  width: auto;
+  z-index: 2;
+  pointer-events: none;
+  fill: #0f121d;
 }
 
 @media (max-width: 1024px) {
-  .login-side-content {
-    display: none !important;
+  .auth-split-layout {
+    grid-template-columns: 1fr;
+  }
+  .auth-left {
+    display: none;
   }
 }
 
 .hero-text {
-  font-size: 80px;
+  font-size: 72px;
   line-height: 1.1;
   font-weight: 900;
   margin-bottom: 24px;
+  color: #fff;
+  border-left: 3px solid #8b5cf6;
+  padding-left: 24px;
 }
 
 .highlight-text {
@@ -112,15 +108,18 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .hero-subtext {
-  font-size: 20px;
+  font-size: 18px;
   color: #d1d5db;
   margin-bottom: 60px;
-  max-width: 350px;
+  max-width: 320px;
+  padding-left: 27px;
+  line-height: 1.5;
 }
 
 .features-row {
   display: flex;
   gap: 32px;
+  padding-left: 27px;
 }
 
 .feature-item {
@@ -136,38 +135,48 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 50%;
   margin-bottom: 12px;
   color: #4f46e5;
+  backdrop-filter: blur(8px);
 }
 
 .feature-item h3 {
-  font-size: 15px;
+  font-size: 14px;
   margin-bottom: 6px;
   color: #fff;
+  font-weight: 700;
 }
 
 .feature-item p {
-  font-size: 13px;
+  font-size: 12px;
   color: #94a3b8;
   line-height: 1.4;
 }
 
+.auth-right {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #0f121d;
+  z-index: 3;
+}
+
 .auth-card {
   width: 90%;
-  max-width: 450px;
+  max-width: 440px;
   padding: 40px;
-  border-radius: 24px;
-  z-index: 10;
-  border: 1px solid rgba(255,255,255,0.05);
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+  border-radius: 20px;
+  background: #141824;
+  border: 1px solid rgba(255,255,255,0.03);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
 }
 
 .input-group {
   position: relative;
   display: flex;
   align-items: center;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.06);
+  background: #1a202c;
+  border: 1px solid rgba(255,255,255,0.04);
   border-radius: 12px;
-  padding: 8px 6px;
+  padding: 6px 4px;
   margin-bottom: 20px;
   transition: all 0.3s ease;
 }
@@ -176,12 +185,12 @@ h1, h2, h3, h4, h5, h6 {
   background: transparent;
   border: none;
   outline: none;
-  color: var(--text-main);
+  color: #fff;
   font-family: var(--font-secondary);
   font-size: 15px;
   width: 100%;
   font-weight: 500;
-  padding: 8px;
+  padding: 10px;
 }
 
 .input-group input::placeholder {
@@ -191,13 +200,13 @@ h1, h2, h3, h4, h5, h6 {
 
 .input-group:focus-within {
   border-color: #4f46e5;
-  box-shadow: 0 0 15px rgba(79, 70, 229, 0.2);
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
   background: rgba(79, 70, 229, 0.05);
 }
 
 .btn-primary {
   width: 100%;
-  background: #4f46e5;
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
   color: #fff;
   border: none;
   padding: 16px;
@@ -206,16 +215,20 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
   cursor: pointer;
   outline: none;
-  transition: background 0.3s, transform 0.3s;
+  transition: transform 0.2s, box-shadow 0.2s;
   letter-spacing: 0.5px;
   font-family: var(--font-secondary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
 }
 
 .btn-primary:active {
   transform: scale(0.98);
 }
 .btn-primary:hover {
-  background: #4338ca;
+  box-shadow: 0 8px 20px rgba(79,70,229,0.4);
 }
 
 .top-header {

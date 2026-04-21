@@ -41,16 +41,21 @@ export default function Login({ onAuthSuccess }) {
 
   return (
     <div className="app-container" style={{ justifyContent: 'center', alignItems: 'center' }}>
-      <div className="glass-panel" style={{ width: '90%', maxWidth: '400px', padding: '32px', zIndex: 10 }}>
+      {/* Dynamic Background */}
+      <div className="login-bg"></div>
+      
+      <div className="glass-panel animate-fade-in" style={{ width: '90%', maxWidth: '420px', padding: '40px 32px', zIndex: 10, position: 'relative' }}>
         
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '32px' }}>
-          <CarTaxiFront color="var(--primary)" size={48} style={{ marginBottom: '16px' }} />
-          <h1 style={{ fontSize: '28px', fontWeight: '800' }}>Campus Rides</h1>
-          <p style={{ color: 'var(--text-muted)' }}>Sign in to book an E-Rickshaw</p>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '40px' }}>
+          <div style={{ background: 'rgba(0, 210, 255, 0.1)', padding: '16px', borderRadius: '50%', marginBottom: '20px', border: '1px solid rgba(0, 210, 255, 0.2)', boxShadow: '0 0 20px rgba(0,210,255,0.2)' }}>
+             <CarTaxiFront color="var(--primary)" size={48} />
+          </div>
+          <h1 style={{ fontSize: '32px', fontWeight: '800', letterSpacing: '-0.5px' }}>Campus Rides</h1>
+          <p style={{ color: 'var(--text-muted)', fontSize: '16px', marginTop: '8px' }}>Sign in to book an E-Rickshaw</p>
         </div>
 
         {error && (
-          <div style={{ backgroundColor: 'rgba(255, 71, 87, 0.1)', color: 'var(--danger)', padding: '12px', borderRadius: '8px', marginBottom: '16px', fontSize: '14px' }}>
+          <div style={{ backgroundColor: 'rgba(255, 0, 85, 0.1)', color: 'var(--danger)', border: '1px solid rgba(255,0,85,0.2)', padding: '14px', borderRadius: '12px', marginBottom: '24px', fontSize: '14px', fontWeight: '500', textAlign: 'center' }}>
             {error}
           </div>
         )}
@@ -76,7 +81,7 @@ export default function Login({ onAuthSuccess }) {
               required 
             />
           </div>
-          <div className="input-group" style={{ marginBottom: '24px' }}>
+          <div className="input-group" style={{ marginBottom: '32px' }}>
             <input 
               type="password" 
               placeholder="Password" 
@@ -86,22 +91,27 @@ export default function Login({ onAuthSuccess }) {
             />
           </div>
 
-          <button type="submit" className="btn-primary" style={{ display: 'flex', justifyContent: 'center', gap: '8px' }}>
-            {isRegistering ? <><UserPlus size={20}/> Register</> : <><LogIn size={20}/> Sign In</>}
+          <button type="submit" className="btn-primary" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px' }}>
+            {isRegistering ? <><UserPlus size={22}/> Register Account</> : <><LogIn size={22}/> Access Terminal</>}
           </button>
         </form>
 
-        <p style={{ textAlign: 'center', marginTop: '24px', color: 'var(--text-muted)', fontSize: '14px' }}>
-          {isRegistering ? 'Already have an account?' : "Don't have an account?"}{' '}
+        <div style={{ marginTop: '32px', textAlign: 'center' }}>
+          <p style={{ color: 'var(--text-muted)', fontSize: '15px' }}>
+            {isRegistering ? 'Already have an account?' : "Don't have an account?"}
+          </p>
           <span 
-            style={{ color: 'var(--primary)', cursor: 'pointer', fontWeight: 'bold' }}
+            style={{ color: 'var(--primary)', cursor: 'pointer', fontWeight: '600', fontSize: '16px', display: 'inline-block', marginTop: '8px', padding: '4px 8px', borderRadius: '8px', transition: 'background 0.3s' }}
             onClick={() => setIsRegistering(!isRegistering)}
+            onMouseOver={(e) => e.target.style.background = 'rgba(0,210,255,0.1)'}
+            onMouseOut={(e) => e.target.style.background = 'transparent'}
           >
-            {isRegistering ? 'Sign In' : 'Register Here'}
+            {isRegistering ? 'Sign In Instead' : 'Create an Account'}
           </span>
-        </p>
+        </div>
 
       </div>
     </div>
   );
 }
+

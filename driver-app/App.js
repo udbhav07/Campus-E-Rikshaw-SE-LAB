@@ -200,72 +200,73 @@ function DriverDashboard({ user }) {
 
   return (
     <View style={styles.container}>
-      {/* Header bar */}
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.headerText}>Driver Status: {isConnected ? 'Connected' : 'Offline'}</Text>
-          <TouchableOpacity onPress={handleLogout}><Text style={{ color: '#ff4757', marginTop: 4 }}>Logout</Text></TouchableOpacity>
-        </View>
-        <View style={styles.toggleContainer}>
-          <Text style={{ marginRight: 10, color: '#fff', fontWeight: 'bold' }}>{isOnline ? 'ONLINE' : 'OFFLINE'}</Text>
-          <Switch
-            value={isOnline}
-            onValueChange={toggleOnline}
-            trackColor={{ false: '#767577', true: '#00df82' }}
-            thumbColor={isOnline ? '#ffffff' : '#f4f3f4'}
-          />
-        </View>
-      </View>
-
-      {/* Map Segment */}
+      {/* Map Segment - Placed at base layer */}
       {location ? (
         <NativeMap location={location} style={styles.map} routePolyline={routePolyline} activeRide={activeRide} driverState={driverState} />
       ) : (
         <View style={styles.mapLoading}>
-           <Text>Acquiring GPS...</Text>
+           <Text style={{ color: '#8b9bb4', fontWeight: 'bold' }}>Acquiring GPS Signal...</Text>
         </View>
       )}
 
-      {/* Ride Request Modal Overlay */}
+      {/* Floating Header bar */}
+      <View style={styles.header}>
+        <View style={styles.headerBrand}>
+          <Text style={styles.headerText}>Terminal <Text style={{ color: isConnected ? '#00ff88' : '#ff0055' }}>•</Text></Text>
+          <TouchableOpacity onPress={handleLogout}><Text style={{ color: '#ff0055', marginTop: 4, fontWeight: '700' }}>DISCONNECT</Text></TouchableOpacity>
+        </View>
+        <View style={styles.toggleContainer}>
+          <Text style={{ marginRight: 10, color: '#fff', fontWeight: '900', letterSpacing: 1 }}>{isOnline ? 'ONLINE' : 'OFFLINE'}</Text>
+          <Switch
+            value={isOnline}
+            onValueChange={toggleOnline}
+            trackColor={{ false: 'rgba(255,255,255,0.1)', true: '#00ff88' }}
+            thumbColor={isOnline ? '#000000' : '#8b9bb4'}
+          />
+        </View>
+      </View>
+
+      {/* Ride Request Blast Modal */}
       {rideRequest && !activeRide && (
-        <View style={styles.requestCard}>
-          <Text style={styles.requestTitle}>🚨 New Ride Request!</Text>
-          <Text style={{marginBottom: 10}}>Passenger is requesting a campus pickup.</Text>
+        <View style={[styles.requestCard, { borderColor: 'rgba(255,0,85,0.4)' }]}>
+          <Text style={styles.requestTitle}>URGENT: Request</Text>
+          <Text style={{ color: '#fff', fontSize: 18, fontWeight: '600', marginBottom: 20 }}>Passenger is requesting a campus pickup nearby.</Text>
           <View style={styles.buttonRow}>
             <TouchableOpacity style={styles.declineBtn} onPress={declineRide}>
-              <Text style={{color: '#fff', fontWeight: 'bold'}}>DECLINE</Text>
+              <Text style={{color: '#fff', fontWeight: '900', fontSize: 16}}>DECLINE</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.acceptBtn} onPress={acceptRide}>
-              <Text style={{color: '#000', fontWeight: 'bold'}}>ACCEPT</Text>
+              <Text style={{color: '#000', fontWeight: '900', fontSize: 16, letterSpacing: 0.5}}>ACCEPT RIDE</Text>
             </TouchableOpacity>
           </View>
         </View>
       )}
 
-      {/* Active Ride HUD */}
+      {/* Active Ride HUD Overlay */}
       {activeRide && (
-         <View style={[styles.requestCard, { borderColor: '#00df82', borderWidth: 2 }]}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 15 }}>
-               <Text style={styles.requestTitle}>
+         <View style={[styles.requestCard, { borderColor: '#00ff88', borderWidth: 2 }]}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 15, alignItems: 'center' }}>
+               <Text style={[styles.requestTitle, { color: '#00ff88', marginBottom: 0 }]}>
                  {driverState === 'ACCEPTED' ? 'Navigating to Pickup' : driverState === 'ARRIVED' ? 'At Pickup' : 'Driving to Destination'}
                </Text>
             </View>
-            <Text style={{color: '#333'}}>Please proceed safely.</Text>
+            <Text style={{ color: '#fff', fontSize: 20, fontWeight: '800' }}>Passenger En Route</Text>
+            <Text style={{ color: '#8b9bb4', fontSize: 16, marginBottom: 25, marginTop: 5 }}>Follow navigation. Please proceed safely.</Text>
             
             <View style={styles.buttonRow}>
                {driverState === 'ACCEPTED' && (
                  <TouchableOpacity style={[styles.acceptBtn, {flex: 1}]} onPress={() => handleRideStatusUpdate('ARRIVED')}>
-                   <Text style={{color: '#000', fontWeight: 'bold'}}>I Have Arrived</Text>
+                   <Text style={{color: '#000', fontWeight: '900', fontSize: 16}}>Mark Arrived</Text>
                  </TouchableOpacity>
                )}
                {driverState === 'ARRIVED' && (
                  <TouchableOpacity style={[styles.acceptBtn, {flex: 1}]} onPress={() => handleRideStatusUpdate('ONGOING')}>
-                   <Text style={{color: '#000', fontWeight: 'bold'}}>Start Trip</Text>
+                   <Text style={{color: '#000', fontWeight: '900', fontSize: 16}}>Start Trip</Text>
                  </TouchableOpacity>
                )}
                {driverState === 'ONGOING' && (
                  <TouchableOpacity style={[styles.acceptBtn, {flex: 1}]} onPress={() => handleRideStatusUpdate('COMPLETED')}>
-                   <Text style={{color: '#000', fontWeight: 'bold'}}>Complete Trip</Text>
+                   <Text style={{color: '#000', fontWeight: '900', fontSize: 16}}>Complete Trip</Text>
                  </TouchableOpacity>
                )}
             </View>
@@ -303,56 +304,81 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0f1115',
+    backgroundColor: '#0d1117',
   },
   header: {
-    paddingTop: 60,
-    paddingBottom: 20,
-    paddingHorizontal: 20,
-    backgroundColor: '#191c24',
+    position: 'absolute',
+    top: 50,
+    left: 20,
+    right: 20,
+    backgroundColor: 'rgba(22, 27, 34, 0.95)',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    padding: 16,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.5,
+    shadowRadius: 15,
+    elevation: 10,
+    zIndex: 10,
+  },
+  headerBrand: {
+    flexDirection: 'column'
   },
   headerText: {
-    color: '#94a3b8',
-    fontSize: 16,
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: '900',
+    letterSpacing: -0.5,
   },
   toggleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.05)',
-    padding: 10,
-    borderRadius: 20,
+    backgroundColor: 'rgba(0,0,0,0.2)',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.05)',
   },
   map: {
     width: '100%',
     height: '100%',
+    position: 'absolute',
+    top: 0,
+    left: 0,
   },
   mapLoading: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#0d1117'
   },
   requestCard: {
     position: 'absolute',
-    bottom: 50,
+    bottom: 40,
     left: 20,
     right: 20,
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 20,
+    backgroundColor: 'rgba(22, 27, 34, 0.98)',
+    borderRadius: 24,
+    padding: 24,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 8,
+    shadowOffset: { width: 0, height: 20 },
+    shadowOpacity: 0.8,
+    shadowRadius: 30,
+    elevation: 20,
   },
   requestTitle: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: '900',
-    marginBottom: 8,
-    color: '#ff4757',
+    marginBottom: 10,
+    color: '#ff0055',
   },
   buttonRow: {
     flexDirection: 'row',
@@ -360,17 +386,25 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   declineBtn: {
-    backgroundColor: '#333',
-    padding: 15,
-    borderRadius: 12,
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    padding: 18,
+    borderRadius: 16,
     flex: 0.48,
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
   },
   acceptBtn: {
-    backgroundColor: '#00df82',
-    padding: 15,
-    borderRadius: 12,
+    backgroundColor: '#00ff88',
+    padding: 18,
+    borderRadius: 16,
     flex: 0.48,
     alignItems: 'center',
+    shadowColor: '#00ff88',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+    elevation: 5,
   },
 });
+

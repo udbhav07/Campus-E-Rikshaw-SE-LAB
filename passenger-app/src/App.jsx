@@ -169,19 +169,19 @@ useEffect(() => {
       {view === 'profile' && <Profile user={user} onClose={() => setView('map')} />}
       {view === 'history' && <History user={user} onClose={() => setView('map')} />}
       
-      {/* Top Header */}
+      {/* Top Header Floating Pill Layers */}
       <div className="top-header">
-        <div className="brand glass-panel" style={{ padding: '8px 16px', borderRadius: '16px' }}>
-          <CarTaxiFront className="brand-icon" size={28} />
-          Campus E-Rickshaw
+        <div className="brand">
+          <CarTaxiFront className="brand-icon" size={24} strokeWidth={2.5} />
+          <span>Campus Rides</span>
         </div>
         <div className="connection-status">
-          <div className="glass-panel" style={{ padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '8px', borderRadius: '16px' }}>
+          <div className="glass-panel" style={{ padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '8px', borderRadius: '100px', border: '1px solid rgba(255,255,255,0.1)' }}>
              <Clock size={18} style={{ cursor: 'pointer', color: 'var(--text-muted)' }} onClick={() => setView('history')} />
-             <UserIcon size={18} style={{ cursor: 'pointer', color: 'var(--text-muted)', marginLeft: 8 }} onClick={() => setView('profile')} />
-             <div style={{ width: '1px', height: '16px', background: 'var(--panel-border)', margin: '0 4px' }}></div>
-             <div className="pulsing-dot" style={{ backgroundColor: isConnected ? '#00df82' : '#ff4757' }}></div>
-             <span style={{ fontSize: '14px', fontWeight: '600' }}>{isConnected ? 'Live' : 'Offline'}</span>
+             <UserIcon size={18} style={{ cursor: 'pointer', color: 'var(--text-muted)', marginLeft: 4 }} onClick={() => setView('profile')} />
+             <div style={{ width: '1px', height: '16px', background: 'var(--panel-border)', margin: '0 8px' }}></div>
+             <div className="pulsing-dot" style={{ backgroundColor: isConnected ? '#00d2ff' : '#ff0055', boxShadow: isConnected ? '0 0 0 rgba(0, 210, 255, 0.4)' : 'none', animation: isConnected ? 'pulse 2s infinite' : 'none' }}></div>
+             <span style={{ fontSize: '14px', fontWeight: '700', color: isConnected ? '#fff' : 'var(--text-muted)' }}>{isConnected ? 'Live' : 'Offline'}</span>
              <LogOut size={16} style={{ marginLeft: '12px', cursor: 'pointer', color: 'var(--danger)' }} onClick={logout} />
           </div>
         </div>
@@ -200,117 +200,122 @@ useEffect(() => {
       <div className="booking-card glass-panel">
         
         {rideStatus === 'IDLE' && (
-          <>
-            <h2 style={{ marginBottom: '20px', fontSize: '24px' }}>Where to?</h2>
+          <div className="animate-fade-in">
+            <h2 style={{ marginBottom: '24px', fontSize: '28px', color: '#fff', letterSpacing: '-0.5px' }}>Where to?</h2>
+            
             <div 
               className="input-group" 
-              style={{ borderColor: selectingMode === 'pickup' ? 'var(--primary)' : 'var(--panel-border)' }}
+              style={{ borderColor: selectingMode === 'pickup' ? 'var(--primary)' : 'var(--panel-border)', background: selectingMode === 'pickup' ? 'rgba(0, 210, 255, 0.05)' : '' }}
               onClick={() => setSelectingMode('pickup')}
             >
-              <MapPin size={20} color="var(--primary)" />
+              <MapPin size={22} color="var(--primary)" />
               {/* change4 */}
               <input
-  type="text"
-  placeholder="Enter Pickup or tap map"
-  value={pickupText}
-  onChange={(e) => setPickupText(e.target.value)}
-  onKeyDown={async (e) => {
-    if (e.key === "Enter") {
-      const place = await searchLocation(pickupText);
-      if (place) {
-        setPickup({
-          lat: parseFloat(place.lat),
-          lng: parseFloat(place.lon)
-        });
-        setPickupText(place.display_name);
-      }
-    }
-  }}
-/>
-
+                type="text"
+                placeholder="Enter Pickup or tap map"
+                value={pickupText}
+                onChange={(e) => setPickupText(e.target.value)}
+                onKeyDown={async (e) => {
+                  if (e.key === "Enter") {
+                    const place = await searchLocation(pickupText);
+                    if (place) {
+                      setPickup({
+                        lat: parseFloat(place.lat),
+                        lng: parseFloat(place.lon)
+                      });
+                      setPickupText(place.display_name);
+                    }
+                  }
+                }}
+              />
             </div>
             
             <div 
               className="input-group" 
-              style={{ borderColor: selectingMode === 'dropoff' ? 'var(--primary)' : 'var(--panel-border)' }}
+              style={{ borderColor: selectingMode === 'dropoff' ? 'var(--danger)' : 'var(--panel-border)', background: selectingMode === 'dropoff' ? 'rgba(255, 0, 85, 0.05)' : '', marginBottom: '24px' }}
               onClick={() => setSelectingMode('dropoff')}
             >
-              <Navigation size={20} color="#ff4757" />
+              <Navigation size={22} color="var(--danger)" />
                {/* change5 */}
               <input
-  type="text"
-  placeholder="Enter Destination or tap map"
-  value={dropoffText}
-  onChange={(e) => setDropoffText(e.target.value)}
-  onKeyDown={async (e) => {
-    if (e.key === "Enter") {
-      const place = await searchLocation(dropoffText);
-      if (place) {
-        setDropoff({
-          lat: parseFloat(place.lat),
-          lng: parseFloat(place.lon)
-        });
-        setDropoffText(place.display_name);
-      }
-    }
-  }}
-/>
+                type="text"
+                placeholder="Enter Destination or tap map"
+                value={dropoffText}
+                onChange={(e) => setDropoffText(e.target.value)}
+                onKeyDown={async (e) => {
+                  if (e.key === "Enter") {
+                    const place = await searchLocation(dropoffText);
+                    if (place) {
+                      setDropoff({
+                        lat: parseFloat(place.lat),
+                        lng: parseFloat(place.lon)
+                      });
+                      setDropoffText(place.display_name);
+                    }
+                  }
+                }}
+              />
             </div>
 
-            <button className="btn-primary" style={{ marginTop: '16px' }} onClick={requestRide}>
+            <button className="btn-primary" onClick={requestRide}>
               Request E-Rickshaw
             </button>
-          </>
+          </div>
         )}
 
         {rideStatus === 'REQUESTING' && (
-          <div style={{ textAlign: 'center', padding: '20px' }}>
-             <div className="pulsing-dot" style={{ margin: '0 auto 20px auto', width: '24px', height: '24px' }}></div>
-             <h3>Searching for drivers connecting to campus...</h3>
-             <p style={{ color: 'var(--text-muted)', marginTop: '8px', marginBottom: '20px' }}>Broadcasting to nearest rickshaws</p>
-             <button className="btn-decline" style={{ width: '100%' }} onClick={cancelRide}>
-                Stop Searching
+          <div className="animate-fade-in" style={{ textAlign: 'center', padding: '24px 12px' }}>
+             <div className="pulsing-dot" style={{ margin: '0 auto 24px auto', width: '32px', height: '32px' }}></div>
+             <h3 style={{ fontSize: '22px', fontWeight: '800' }}>Locating E-Rickshaws...</h3>
+             <p style={{ color: 'var(--text-muted)', marginTop: '8px', marginBottom: '32px', fontSize: '16px' }}>Broadcasting request to nearby drivers on campus</p>
+             <button className="btn-decline" onClick={cancelRide}>
+                Cancel Request
              </button>
           </div>
         )}
 
         {rideStatus === 'ASSIGNED' && assignedDriver && (
-          <div style={{ padding: '10px 0' }}>
-             <h3 style={{ color: 'var(--primary)', marginBottom: '16px' }}>Driver is en route!</h3>
-             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', background: 'rgba(255,255,255,0.05)', padding: '16px', borderRadius: '16px' }}>
-                <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: '#ffcc00' }}></div>
+          <div className="animate-fade-in" style={{ padding: '12px 0' }}>
+             <h3 style={{ color: 'var(--primary)', marginBottom: '20px', fontSize: '24px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+               <span className="pulsing-dot" style={{width: 10, height: 10}}></span> Driver En Route!
+             </h3>
+             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', background: 'var(--secondary-bg)', padding: '20px', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: 'linear-gradient(135deg, #00d2ff, #3a86ff)', display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#fff', fontSize: '24px', fontWeight: 'bold' }}>
+                  {assignedDriver.name.charAt(0).toUpperCase()}
+                </div>
                 <div>
-                  <h4 style={{ fontSize: '18px' }}>{assignedDriver.name}</h4>
-                  <p style={{ color: 'var(--text-muted)' }}>Vehicle: {assignedDriver.vehicle}</p>
+                  <h4 style={{ fontSize: '20px', fontWeight: '700' }}>{assignedDriver.name}</h4>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '15px', marginTop: '4px' }}>Vehicle: <span style={{color: '#fff'}}>{assignedDriver.vehicle}</span></p>
                 </div>
              </div>
-             <p style={{ marginTop: '16px', textAlign: 'center', color: 'var(--text-muted)' }}>Sit tight. Your driver will mark the ride complete upon arrival.</p>
-             <button className="btn-decline" style={{ width: '100%', marginTop: '16px' }} onClick={cancelRide}>
-                Cancel Ride
+             <p style={{ marginTop: '20px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '15px' }}>Sit tight. Your driver will mark the ride complete upon arrival.</p>
+             <button className="btn-decline" style={{ marginTop: '24px' }} onClick={cancelRide}>
+                Cancel Trip
              </button>
           </div>
         )}
 
         {rideStatus === 'RATING' && (
-           <div style={{ textAlign: 'center', padding: '10px 0' }}>
-              <h2 style={{ color: 'var(--primary)', marginBottom: '10px' }}>You have arrived!</h2>
-              <p style={{ color: 'var(--text-muted)', marginBottom: '20px' }}>How was your trip with {assignedDriver?.name}?</p>
+           <div className="animate-fade-in" style={{ textAlign: 'center', padding: '16px 0' }}>
+              <h2 style={{ color: 'var(--primary)', marginBottom: '12px', fontSize: '28px' }}>You have arrived!</h2>
+              <p style={{ color: 'var(--text-muted)', marginBottom: '24px', fontSize: '16px' }}>How was your trip with {assignedDriver?.name}?</p>
               
-              <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginBottom: '20px' }}>
+              <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginBottom: '28px' }}>
                   {[1,2,3,4,5].map(star => (
-                      <span key={star} onClick={() => setRatingInput({...ratingInput, rating: star})} style={{ fontSize: '32px', cursor: 'pointer', color: star <= ratingInput.rating ? '#ffcc00' : 'var(--text-muted)' }}>
+                      <span key={star} onClick={() => setRatingInput({...ratingInput, rating: star})} style={{ fontSize: '40px', cursor: 'pointer', color: star <= ratingInput.rating ? '#ffcc00' : 'var(--panel-border)', textShadow: star <= ratingInput.rating ? '0 0 16px rgba(255, 204, 0, 0.4)' : 'none', transition: 'all 0.2s' }}>
                          ★
                       </span>
                   ))}
               </div>
-              <input 
-                 type="text" 
-                 placeholder="Leave a comment (optional)" 
-                 value={ratingInput.feedback} 
-                 onChange={e => setRatingInput({...ratingInput, feedback: e.target.value})}
-                 style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid var(--panel-border)', background: 'var(--panel-bg)', color: '#fff', marginBottom: '16px' }}
-              />
-              <button className="btn-primary" style={{ width: '100%' }} onClick={submitRating}>Submit Feedback</button>
+              <div className="input-group" style={{ marginBottom: '24px' }}>
+                  <input 
+                    type="text" 
+                    placeholder="Leave a comment (optional)" 
+                    value={ratingInput.feedback} 
+                    onChange={e => setRatingInput({...ratingInput, feedback: e.target.value})}
+                  />
+              </div>
+              <button className="btn-primary" onClick={submitRating}>Submit Feedback</button>
            </div>
         )}
 

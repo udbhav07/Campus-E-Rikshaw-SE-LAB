@@ -220,18 +220,18 @@ function App() {
 
       {/* Top Header Layer */}
       <div className="top-header">
-        <div className="brand glass-panel" style={{ padding: '12px 20px', borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <CarTaxiFront size={24} style={{ color: 'var(--primary)' }} />
+        <div className="brand">
+          <CarTaxiFront size={28} style={{ color: 'var(--primary)' }} />
           Driver Terminal
-          <div style={{ marginLeft: 6, display: 'flex', gap: 10 }}>
-            <Clock size={18} onClick={() => setView('history')} style={{ cursor: 'pointer', color: 'var(--text-muted)' }} />
-            <UserIcon size={18} onClick={() => setView('profile')} style={{ cursor: 'pointer', color: 'var(--text-muted)' }} />
-            <LogOut size={18} onClick={logout} style={{ cursor: 'pointer', color: 'var(--danger)' }} />
+          <div style={{ marginLeft: 12, display: 'flex', gap: 16, borderLeft: '1px solid var(--panel-border)', paddingLeft: 16 }}>
+            <Clock size={20} onClick={() => setView('history')} style={{ cursor: 'pointer', color: 'var(--text-muted)' }} />
+            <UserIcon size={20} onClick={() => setView('profile')} style={{ cursor: 'pointer', color: 'var(--text-muted)' }} />
+            <LogOut size={20} onClick={logout} style={{ cursor: 'pointer', color: 'var(--danger)' }} />
           </div>
         </div>
         
-        <div className="glass-panel" style={{ padding: '12px 20px', borderRadius: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span style={{ fontWeight: 800 }}>{isOnline ? 'ONLINE' : 'OFFLINE'}</span>
+        <div className="status-pill">
+            <span style={{ fontWeight: 900, color: isOnline ? '#fff' : 'var(--text-muted)', letterSpacing: '1px' }}>{isOnline ? 'ONLINE' : 'OFFLINE'}</span>
             <input 
               type="checkbox" 
               className="toggle-switch"
@@ -254,30 +254,35 @@ function App() {
 
       {/* Ride Request Blast Modal */}
       {rideRequest && !activeRide && (
-        <div className="ride-request-modal glass-panel">
-          <h2 style={{ color: 'var(--danger)', marginBottom: '8px' }}>🚨 New Ride Request!</h2>
-          <p style={{ color: 'var(--text-muted)' }}>Passenger is requesting a campus pickup nearby.</p>
+        <div className="ride-request-modal animate-fade-in">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+            <div className="pulsing-dot" style={{ backgroundColor: 'var(--danger)', animation: 'pulse-green 1s infinite' }}></div>
+            <h2 style={{ color: 'var(--danger)' }}>URGENT: Request</h2>
+          </div>
+          <p style={{ color: 'var(--text-main)', fontSize: '18px', fontWeight: '500' }}>Passenger is requesting a campus pickup nearby.</p>
           
           <div className="action-buttons">
-            <button className="btn-decline" onClick={declineRide}>Decline</button>
-            <button className="btn-accept" onClick={acceptRide}>Accept</button>
+            <button className="btn-decline-solid" onClick={declineRide}>Decline</button>
+            <button className="btn-accept" onClick={acceptRide}>ACCEPT RIDE</button>
           </div>
         </div>
       )}
 
       {/* Active Ride HUD Overlay */}
       {activeRide && (
-         <div className="ride-request-modal glass-panel" style={{ bottom: '20px', border: '1px solid var(--primary)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <h2 style={{ color: 'var(--primary)' }}>{driverState === 'ACCEPTED' ? 'Navigating to Pickup' : driverState === 'ARRIVED' ? 'At Pickup' : 'Driving to Destination'}</h2>
-                <span className="pulsing-dot" style={{ backgroundColor: '#00df82' }}></span>
+         <div className="ride-request-modal active-hud animate-fade-in">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                <h2 style={{ color: 'var(--primary)', fontSize: '24px' }}>
+                  {driverState === 'ACCEPTED' ? 'Navigating to Pickup' : driverState === 'ARRIVED' ? 'At Pickup' : 'Driving to Destination'}
+                </h2>
+                <span className="pulsing-dot" style={{ backgroundColor: '#00ff88', animation: 'pulse-green 1.5s infinite' }}></span>
             </div>
             
-            <p style={{ color: '#fff', fontSize: '18px', fontWeight: 'bold' }}>Passenger En Route</p>
-            <p style={{ color: 'var(--text-muted)', marginBottom: '24px' }}>Please proceed safely.</p>
+            <p style={{ color: '#fff', fontSize: '20px', fontWeight: '800' }}>Passenger En Route</p>
+            <p style={{ color: 'var(--text-muted)', marginBottom: '28px', fontSize: '16px' }}>Follow navigation. Please proceed safely.</p>
             
-            <div style={{ display: 'flex', gap: '10px' }}>
-                {driverState === 'ACCEPTED' && <button className="btn-primary" onClick={() => handleRideStatusUpdate('ARRIVED')}>I Have Arrived</button>}
+            <div style={{ display: 'flex', gap: '16px' }}>
+                {driverState === 'ACCEPTED' && <button className="btn-primary" onClick={() => handleRideStatusUpdate('ARRIVED')}>Mark Arrived</button>}
                 {driverState === 'ARRIVED'  && <button className="btn-primary" onClick={() => handleRideStatusUpdate('ONGOING')}>Start Trip</button>}
                 {driverState === 'ONGOING'  && <button className="btn-primary" onClick={() => handleRideStatusUpdate('COMPLETED')}>Complete Trip</button>}
             </div>

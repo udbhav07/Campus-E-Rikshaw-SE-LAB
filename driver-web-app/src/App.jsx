@@ -229,7 +229,9 @@ function App() {
             <LogOut size={20} onClick={logout} style={{ cursor: 'pointer', color: 'var(--danger)' }} />
           </div>
         </div>
-        
+      </div>
+
+      <div style={{ position: 'absolute', bottom: '24px', left: '24px', zIndex: 1000 }}>
         <div className="status-pill">
             <span style={{ fontWeight: 900, color: isOnline ? '#fff' : 'var(--text-muted)', letterSpacing: '1px' }}>{isOnline ? 'ONLINE' : 'OFFLINE'}</span>
             <input 

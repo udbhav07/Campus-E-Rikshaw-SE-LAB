@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { auth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from '../firebaseConfig';
+import { syncUserWithBackend } from '../services/apiService';
 import { CarFront, Mail, Lock, ShieldCheck, Banknote, Clock8, Eye, EyeOff, ArrowRight } from 'lucide-react';
 
 export default function Login({ onAuthSuccess }) {
@@ -14,26 +15,27 @@ export default function Login({ onAuthSuccess }) {
     e.preventDefault();
     setError('');
     try {
-      let creds;
       if (isRegistering) {
         if (!name) return setError("Please provide your full name");
-        creds = await createUserWithEmailAndPassword(auth, email, password);
         
-        await fetch('http://localhost:5000/api/user/sync', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                firebaseUid: creds.user.uid,
-                email: creds.user.email,
-                name: name,
-                role: 'DRIVER'
-            })
+        // 1. Create user in Firebase Auth
+        const creds = await createUserWithEmailAndPassword(auth, email, password);
+        
+        // 2. Sync new user to MongoDB backend
+        await syncUserWithBackend({
+            firebaseUid: creds.user.uid,
+            email: creds.user.email,
+            name: name,
+            role: 'DRIVER'
         });
       } else {
-        creds = await signInWithEmailAndPassword(auth, email, password);
+        // 1. Sign in with Firebase Auth
+        await signInWithEmailAndPassword(auth, email, password);
       }
+      
       onAuthSuccess();
     } catch (err) {
+      // Clean up Firebase error messages for better UX
       setError(err.message.replace('Firebase:', '').trim());
     }
   };
@@ -72,18 +74,18 @@ export default function Login({ onAuthSuccess }) {
       <div className="auth-right animate-fade-in">
         <div className="auth-card">
           
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '32px' }}>
-            <div style={{ background: 'linear-gradient(135deg, #3b82f6 0%, #4f46e5 100%)', padding: '16px', borderRadius: '18px', marginBottom: '24px', boxShadow: '0 8px 24px rgba(59, 130, 246, 0.4)' }}>
+          <div className="auth-header">
+            <div className="auth-icon-wrapper">
               <CarFront color="#fff" size={36} strokeWidth={2.5} />
             </div>
-            <h1 style={{ fontSize: '26px', fontWeight: '800', color: '#fff', textAlign: 'center', letterSpacing: '-0.5px' }}>
+            <h1 className="auth-title">
               Welcome Back, <span className="highlight-text">Driver!</span>
             </h1>
-            <p style={{ color: '#8b9bb4', fontSize: '14px', marginTop: '8px' }}>Sign in to continue your journey</p>
+            <p className="auth-subtitle">Sign in to continue your journey</p>
           </div>
 
           {error && (
-            <div style={{ backgroundColor: 'rgba(255, 0, 85, 0.1)', color: '#ff0055', border: '1px solid rgba(255,0,85,0.3)', padding: '14px', borderRadius: '12px', marginBottom: '24px', fontSize: '13px', fontWeight: '600', textAlign: 'center' }}>
+            <div className="auth-error-box">
               {error}
             </div>
           )}
@@ -102,7 +104,7 @@ export default function Login({ onAuthSuccess }) {
             )}
             
             <div className="input-group">
-              <Mail size={18} color="#64748b" style={{ marginLeft: '12px' }}/>
+              <Mail size={18} color="#64748b" className="input-icon" />
               <input  
                 type="email" 
                 placeholder="Email or Phone Number" 
@@ -113,7 +115,7 @@ export default function Login({ onAuthSuccess }) {
             </div>
             
             <div className="input-group" style={{ marginBottom: '16px' }}>
-              <Lock size={18} color="#64748b" style={{ marginLeft: '12px' }}/>
+              <Lock size={18} color="#64748b" className="input-icon" />
               <input 
                 type={showPassword ? "text" : "password"} 
                 placeholder="Password" 
@@ -122,7 +124,7 @@ export default function Login({ onAuthSuccess }) {
                 required 
               />
               <div 
-                style={{ position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', display: 'flex' }}
+                className="password-toggle"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? <EyeOff size={18} color="#64748b" /> : <Eye size={18} color="#64748b" />}
@@ -130,12 +132,12 @@ export default function Login({ onAuthSuccess }) {
             </div>
             
             {!isRegistering && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px' }}>
-                <label style={{ display: 'flex', alignItems: 'center', color: '#cbd5e1', fontSize: '13px', cursor: 'pointer' }}>
-                  <input type="checkbox" style={{ marginRight: '8px', accentColor: '#4f46e5' }} />
+              <div className="auth-options">
+                <label className="remember-me">
+                  <input type="checkbox" />
                   Remember me
                 </label>
-                <span style={{ color: '#4f46e5', fontSize: '13px', cursor: 'pointer', fontWeight: '600' }}>Forgot Password?</span>
+                <span className="forgot-password">Forgot Password?</span>
               </div>
             )}
 
@@ -145,26 +147,26 @@ export default function Login({ onAuthSuccess }) {
             </button>
           </form>
 
-          <div style={{ marginTop: '32px', position: 'relative', textAlign: 'center' }}>
-              <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', position: 'absolute', top: '50%', left: '0', right: '0', zIndex: 1 }}></div>
-              <span style={{ background: '#141824', padding: '0 12px', fontSize: '12px', color: '#64748b', position: 'relative', zIndex: 2 }}>or continue with</span>
+          <div className="social-divider">
+              <div className="divider-line"></div>
+              <span className="divider-text">or continue with</span>
           </div>
           
-          <div style={{ display: 'flex', gap: '16px', marginTop: '24px', marginBottom: '32px' }}>
-              <button style={{ flex: 1, padding: '14px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)', background: '#1a202c', color: '#fff', fontSize: '14px', fontWeight: '600', cursor: 'pointer', display:'flex', justifyContent:'center', alignItems:'center', gap:'8px', transition: 'all 0.2s' }} onMouseOver={e=>e.currentTarget.style.background='rgba(255,255,255,0.05)'} onMouseOut={e=>e.currentTarget.style.background='#1a202c'}>
-                <span style={{color:'#ea4335', fontWeight: '900', fontSize: '18px'}}>G</span> Google
+          <div className="social-buttons">
+              <button className="btn-social">
+                <span className="social-icon google">G</span> Google
               </button>
-              <button style={{ flex: 1, padding: '14px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)', background: '#1a202c', color: '#fff', fontSize: '14px', fontWeight: '600', cursor: 'pointer', display:'flex', justifyContent:'center', alignItems:'center', gap:'8px', transition: 'all 0.2s' }} onMouseOver={e=>e.currentTarget.style.background='rgba(255,255,255,0.05)'} onMouseOut={e=>e.currentTarget.style.background='#1a202c'}>
-                <span style={{color:'#1877f2', fontWeight: '900', fontSize: '18px'}}>f</span> Facebook
+              <button className="btn-social">
+                <span className="social-icon facebook">f</span> Facebook
               </button>
           </div>
 
-          <div style={{ textAlign: 'center' }}>
-            <span style={{ color: '#94a3b8', fontSize: '13px' }}>
+          <div className="auth-footer">
+            <span className="footer-text">
               {isRegistering ? 'Already have an account?' : "New here?"}
             </span>
             <span 
-              style={{ color: '#4f46e5', cursor: 'pointer', fontWeight: '600', fontSize: '13px', marginLeft: '6px' }}
+              className="footer-link"
               onClick={() => setIsRegistering(!isRegistering)}
             >
               {isRegistering ? 'Sign In' : 'Register Now'}

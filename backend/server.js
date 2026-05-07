@@ -49,6 +49,18 @@ app.use('/api/user', userRoutes);
 // Base route
 app.get('/', (req, res) => res.json({ message: 'E-Rickshaw API is running' }));
 
+/** * NOMINAL CHANGE: Global Error Handling 
+ * This prevents the server from leaking sensitive data during a crash.
+ */
+app.use((err, req, res, next) => {
+  const status = err.status || 500;
+  console.error(`[Error] ${err.message}`);
+  res.status(status).json({
+    success: false,
+    message: err.message || 'Internal Server Error',
+  });
+});
+
 const PORT = process.env.PORT || 5000;
 
 server.listen(PORT, () => {

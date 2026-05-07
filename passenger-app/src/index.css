@@ -339,3 +339,37 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--text-muted);
 }
 
+/* Map & Booking UI */
+.map-container {
+  height: 100vh;
+  width: 100vw;
+  z-index: 1;
+}
+
+.booking-card {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 480px;
+  padding: 32px;
+  z-index: 1000;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.booking-card h2 {
+  font-size: 28px;
+  margin-bottom: 24px;
+  color: #fff;
+}
+
+@media (max-width: 768px) {
+  .booking-card {
+    bottom: 0;
+    width: 100%;
+    border-radius: 32px 32px 0 0;
+    padding: 24px;
+  }
+}
+
